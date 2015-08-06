@@ -1,5 +1,13 @@
 
 # Warming up: Ping-Pong
 
-TODO
+The classical *Ping-Pong* example is somehow to concurrency what *Hello-World* is to sequential programming. It is a minimal system that still exposes some key features:
+
+  - there's *concurrency*: there is a Ping *and* a Pong,
+
+  - there's *interaction*: the Ping talks to the Pong and *vice-versa*,
+
+  - and it is a *reactive* system in that unless we kill it in one way or another, the system does not terminate.
+
+But it is similarly to its sequential cousin *not* a deeply interesting example, so it's perfect to see if our installation works.
 
