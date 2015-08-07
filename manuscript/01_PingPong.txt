@@ -19,6 +19,8 @@ A> A **system** is composed of **threads** that exchange messages through **chan
 
 That's pretty much summarize what (an major part of) *core.async* is all about !
 
+## Version 1: the tireless ping-pong players
+
 But first things first, let us write our first *core.async* example. The namespace specification is the following one.
 
 {crop-start-line=6,crop-end-line=8}
@@ -138,4 +140,71 @@ Start! Ping!
 ~~~~~~~~
 
 Oops, that's it the main thread already terminated !
+
+## Version 2: the gas-guzzlers with a paddle
+
+Of course, not *all* concurrent programs are non-terminating, but let's say that if non-termination is a show-stopper for sequential programs, it is a *feature* of many concurrent programs.
+
+So let's modify slightly the Ping-Pong example so that it predictibly terminates. One idea to make thread self-terminating is to provide them with some fuel, and force the thread termination when it's exhausted (I hope you're not!).
+
+{crop-start-line=27,crop-end-line=34}
+<<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
+
+The *runner* is modified accordingly.
+
+{crop-start-line=36,crop-end-line=44}
+<<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
+
+Let's start the system at the repl this time:
+
+~~~~~~~~
+$ lein repl
+nREPL server started on port 53047 on host 127.0.0.1 - nrepl://127.0.0.1:53047
+REPL-y 0.3.5, nREPL 0.2.10
+Clojure 1.7.0
+Java HotSpot(TM) 64-Bit Server VM 1.8.0-b132
+
+   ... etc ...
+
+=> (run-pingpong-fuel 10)
+Start! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Joined!
+nil
+=> (run-pingpong-fuel 5)
+Start! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Joined!
+nil
+~~~~~~~~
+
+This is what you may obtain if you're lucky enough (which means: most of the time!).
+If you're unlucky (which means: rarely enough!) you could see something more like this:
+
+~~~~~~~~
+=> (run-pingpong-fuel 10)
+Start! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong!
+~~~~~~~~
+
+Here, the system does *not* terminate because the *pinger* blocks at some point and the join on channel `j` in fact never occurs (and in this case you have type hit `Ctrl-C`).  What happens is that the *ponger* thread sees its fuel exhausted too soon. Look at the trace: the first message is `Pong!` and not `Ping!` as in the other cases. This may occur because the first send `(>!! ch "Start! ")` is *non-deterministic*. It will either awake the *pinger*  or the *ponger* (and the `(Thread/sleep 100)` is here to make sure this *actually* happens). If the *ponger* starts, then it's last action will be to send it's `fuel`-th message. At the other end the *pinger* will receive the message for the `fuel`-th time.  But then there is no one to synchronize with since the *ponger* terminated. When the *pinger* is started first, we reach a situation where only the *ponger* remains blocked. But this is not a problem since we join the *pinger* in the runner.
+
+I told you: *non-determinism* sometimes bites, and when it does ... that hurts !
+
+Q> ## Non-determinism ?
+Q> A sequential program is most of the time *deterministic*: provided we provide
+Q> the same input, two distinct executions of the same program will produce the same result.
+Q> It is even a stronger requirement for the *pure functional* parts.
+Q> A concurrent program is often (but not always!) *non-deterministic*: provided with the
+Q> same input, two distinct executions can produce very different outcomes.
+Q> Is this a feature we should desire or fear? I would say both. On the one hand, *non-determinism*
+Q> is often the price to pay for the tremendous gain of performances offered by
+Q> concurrent programs on parallel hardware. On the other hand, this is a major source
+Q> of bugs that are extremely difficult to track-down, and whose effects can be
+Q> disastrous. Frameworks such as `core.async` offer ways to control *non-determinism*
+Q> thanks to powerfull abstractions. But we shouldn't be too naive, this is a
+Q> difficult issue with no [silver bullet](https://en.wikipedia.org/wiki/No_Silver_Bullet).
+
+So, how do we solve this issue ? One way that preserves *non-determinism* (in many situations this is what we want!) is to give an extra gallon of fuel for the *ponger*. If the *pinger* terminates first it will be blocked before exhaustion anyway, and the extra fuel will allow the *pinger* to terminate properly.
+
+E> ## The deterministic Ping-Pong
+E> Another, more robust solution would be to modify the program so that the initialisation becomes deterministic.
+E> An idea is to split the `pingpong-fuel` definition in two, and only allows e.g. the *pinger* to start first.
+
+
 

@@ -8,4 +8,7 @@
   :plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]]
   :main ^:skip-aot think-concurrent.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}}
+  :repl-options { 
+                 :prompt (fn [_] "=> ")
+                 :welcome (do)})
