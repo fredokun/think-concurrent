@@ -220,21 +220,20 @@ The *clojure* case is interesting. At the basis you find the JVM and its very ad
 
 To speak about *core.async*, it is clearly a member of the *message-passing* family. I think *core.async* could be called a **Channel Oriented Programming** framework (COP ? really ?).  So in clojure you get the best of both world!
 
-I> ## Channels: always and everywhere
+I> ## Channels: what else ?
 I> *core.async* is by no means the first language adopting a *channel-first* view of concurrency.
-I> The most famous example is the *Communicating Sequential Processes* (CSP) of *sir Tony Hoare*.
+I> The most famous example is the *Communicating Sequential Processes* (CSP) by *C.A.R. Hoare*.
 I> In a seminal paper (197x?) the syntax and informal semantics of a programming formalism
-I> for concurrency is proposed. This will evolve to both a *theory*  (the CSP *theory*, which is
-I> related although distinct) and a real programming language, perhaps slightly ahead of its time: (OCCAM)[].
+I> for concurrency is proposed, that of course involves processes and channels.
+I> This will ultimately evolve to both a *theory*  (the [CSP formalism](http://www.usingcsp.com), which is
+I> related although distinct) and a real programming language, perhaps slightly ahead of its time: [OCCAM](http://www.wotug.org/occam).
 I> Note, however, that channel references cannot be transmitted in CSP/OCCAM  (at least not in
-I> the original versions). The theory of Pi-calculus is in fact closer to the *core.async* 
+I> the original versions). Robin Milner's [Pi-calculus](https://en.wikipedia.org/wiki/Π-calculus)
+I> appears to me as in fact closer to the *core.async* 
 I> semantics (as long as we restrict to synchronous channels). There is also a long tradition
-I> of channel-based programming language originally from the Bell labs:  beginning with (Newsqueak)[]
-I> (a nice prototype), continuing with (Alef)[] in Plan 9 and then (Limbo)[] in Inferno. This list
-I> ends with the langage (go)[http://golang.org] that is now quite popular. You might ask
-I> what is the main relation between these languages, beyond the fact that they provide
-I> roughly the same concurrency model (quite close to *core.async*)? They were all designed or co-designed
-I> by *Rob Pike*... Never say die!
-
+I> of channel-based programming language originally from the Bell labs:  beginning with *Newsqueak*
+I> , continuing with *Alef* in Plan 9 and then *Limbo* in Inferno. This [list](https://swtch.com/~rsc/thread)
+I> ends with the langage (go)[http://golang.org] that is now quite popular.
+I> However, *core.async* is *way* cooler! (there's a Lisp below).
 
 
