@@ -17,8 +17,16 @@ Technically-speaking, the system we are going to build consists in two *threads*
 
 That's pretty much summarize what (an major part of) `core.async` is all about !
 
-But first things first, let us write (or load) our first `core.async` example
+But first things first, let us write our first `core.async` example (in `src/think_concurrent/pingpong.clj`). The namespace specification is the following one.
 
-{crop-start-line=6,crop-end-line=9}
-<<[PingPong](code/think-concurrent/src/think_concurrent/pingpong.clj)
+{crop-start-line=6,crop-end-line=8}
+<<(code/think-concurrent/src/think_concurrent/pingpong.clj)
+
+The `clojure.core.async` namespace provides is where the main API resides. Since it's in the core it is fairly common to `refer` the main functionalities, especially the cryptic ones such as `>!!` (blocking send) and `<!!` (blocking receive).
+
+Now, the behavior of both our threads can be specified as a single function:
+
+{crop-start-line=29,crop-end-line=17}
+<<(code/think-concurrent/src/think_concurrent/pingpong.clj)
+
 

@@ -5,7 +5,6 @@
 
 (ns think-concurrent.pingpong
   (:require [clojure.core.async
-             :as async
              :refer [>!! <!! chan thread]]))
 
 (defn ping-pong
