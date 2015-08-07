@@ -15,9 +15,9 @@ Technically-speaking, the system we are going to build consists in two *threads*
 
 > a **system** is composed of **threads** that exchange messages through **channels**.
 
-That's pretty much summarize what (an major part of) `core.async` is all about !
+That's pretty much summarize what (an major part of) *core.async* is all about !
 
-But first things first, let us write our first `core.async` example. The namespace specification is the following one.
+But first things first, let us write our first *core.async* example. The namespace specification is the following one.
 
 {crop-start-line=6,crop-end-line=8}
 <<[pingpong.clj](code/think-concurrent/src/think_concurrent/pingpong.clj)
@@ -27,6 +27,38 @@ The `clojure.core.async` namespace provides is where the main API resides. Since
 Now, the behavior of both our threads can be specified as a single function:
 
 {crop-start-line=10,crop-end-line=17}
-<<(code/think-concurrent/src/think_concurrent/pingpong.clj)
+<<[](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
+The first two parameters are intended to be the two communication channels on which the thread interact:
+
+  - the channel `in`  for receiving messages
+
+  - the channel `out` for sending messages
+
+The parameter `kind` indicates the message that the thread will emit: either `"Ping ! "` or `"Pong ! "`. The `thread` primitive of *core.async* is used to spawn a new ... guess what ? ... *thread* of course ! In *clojure* this means a JVM thread hence what we shall call a *heavy thread* in this book. The body of `thread` will thus be executer in parallel with the caller thread, *parallelism* you go! We next enter a loop consisting in indefinitely repeating the following sequence.
+
+First, in the expression:
+
+[]
+    (let [msg (<!! in)]
+      ;; do something with msg
+      ...)
+
+we wait on channel `in` for a message `msg`.
+
+Then, with:
+
+[]
+    (print msg) (flush)
+
+we print the message upon reception (note the `flush` for safer -- but not completely safe -- outputs).
+
+Finally, with:
+
+[]
+    (>!! out kind)
+
+The thread sends on channel `out` its own `kind` of message: `"Ping ! "` if we're the *pinger*, `"Pong ! "` if we're the *ponger*.
+
+And finally we `recur` for good.
 

@@ -8,12 +8,12 @@
              :refer [>!! <!! chan thread]]))
 
 (defn ping-pong
-  [in out role]
+  [in out kind]
   (thread
     (loop []
       (let [msg (<!! in)]
         (print msg) (flush)
-        (>!! out role)
+        (>!! out kind)
         (recur)))))
 
 (defn run-ping-pong
