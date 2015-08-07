@@ -223,7 +223,7 @@ To speak about *core.async*, it is clearly a member of the *message-passing* fam
 I> ## Channels: what else ?
 I> *core.async* is by no means the first language adopting a *channel-first* view of concurrency.
 I> The most famous example is the *Communicating Sequential Processes* (CSP) by *C.A.R. Hoare*.
-I> In a seminal paper (197x?) the syntax and informal semantics of a programming formalism
+I> In a seminal scientific paper (1978) the syntax and informal semantics of a programming formalism
 I> for concurrency is proposed, that of course involves processes and channels.
 I> This will ultimately evolve to both a *theory*  (the [CSP formalism](http://www.usingcsp.com), which is
 I> related although distinct) and a real programming language, perhaps slightly ahead of its time: [OCCAM](http://www.wotug.org/occam).
