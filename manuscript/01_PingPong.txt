@@ -39,31 +39,32 @@ The parameter `kind` indicates the message that the thread will emit: either `"P
 
 1. First, in the expression:
 
-  {lang="clojure"}
-      (let [msg (<!! in)]
-        ;; do something with msg
-        ...)
+    {lang="clojure"}
+        (let [msg (<!! in)]
+          ;; do something with msg
+          ...)
 
-  the current thread listens on channel `in` and *blocks*  until a message `msg` can be received.
+    the current thread listens on channel `in` and *blocks*  until a message `msg` can be received.
 
 2. Then, with:
 
-  {lang="clojure"}
-      (print msg) (flush)
+    {lang="clojure"}
+        (print msg) (flush)
 
-  the thread print the message upon reception (note the `flush` for safer -- but not completely safe -- outputs).
+    the thread print the message upon reception (note the `flush` for safer -- but not completely safe -- outputs).
 
 3. Finally, with:
 
-  {lang="clojure"}
-      (>!! out kind)
+    {lang="clojure"}
+        (>!! out kind)
 
-  the thread *blocks* until it can send on channel `out` its own `kind` of message: `"Ping ! "` if we're the *pinger*, `"Pong ! "` if we're the *ponger*.
+    the thread *blocks* until it can send on channel `out` its own `kind` of message: `"Ping ! "` if we're the *pinger*, `"Pong ! "` if we're the *ponger*.
 
 4.  And finally we `recur` for good.
 
 I> ## Blocking send and receive actions on **synchronous channels**
 I> The fundamental characteristic of the send and receive operations is that they are potentially *blocking*. Using the default *synchronous channels* the blocking semantics is as follows:
+I>
 I>  - a thread performing a receive action  `(<!! ch)`  (receiving on channel `ch`)  is blocking until another thread performs a corresponding send action `(>!! ch value)`, i.e. sending some `value` on the *same* channel `ch`,
 I>  - and `vice-versa`.
 
