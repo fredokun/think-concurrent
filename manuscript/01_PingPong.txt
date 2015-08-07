@@ -1,13 +1,24 @@
 
 # Warming up: Ping-Pong
 
-The classical *Ping-Pong* example is somehow to concurrency what *Hello-World* is to sequential programming. It is a minimal system that still exposes some key features:
+The classical "Ping-Pong" example is somehow to concurrency what the infamous "Hello World!" is to sequential programming. It is a minimal system that still exposes some key features of (here concurrent) programs:
 
-  - there's *concurrency*: there is a Ping *and* a Pong,
+  - there's **concurrency**: there is a Ping *and* a there is a Pong,
 
-  - there's *interaction*: the Ping talks to the Pong and *vice-versa*,
+  - there's **interaction**: the Ping talks to the Pong and *vice-versa*,
 
-  - and it is a *reactive* system in that unless we kill it in one way or another, the system does not terminate.
+  - there's **no termination**: use your `Ctrl-C` to stop the program.
 
-But it is similarly to its sequential cousin *not* a deeply interesting example, so it's perfect to see if our installation works.
+But still similarly to its sequential welcoming cousin: this is *not* a deeply interesting example, so it's perfect to focus on the *compile-and-run* issues.
+
+Technically-speaking, the system we are going to build consists in two *threads* that exchange and print Ping-Pong messages through *channels*. Here they are! the two "big" words have been shouted out:
+
+> a **system** is composed of **threads** that exchange messages through **channels**.
+
+That's pretty much summarize what (an major part of) `core.async` is all about !
+
+But first things first, let us write (or load) our first `core.async` example
+
+{crop-start-line=6,crop-end-line=9}
+<<[PingPong](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
