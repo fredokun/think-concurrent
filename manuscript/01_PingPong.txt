@@ -11,9 +11,9 @@ The classical "Ping-Pong" example is somehow to concurrency what the infamous "H
 
 But still similarly to its sequential welcoming cousin: this is *not* a deeply interesting example, so it's perfect to focus on the *compile-and-run* issues.
 
-Technically-speaking, the system we are going to build consists in two *threads* that exchange and print Ping-Pong messages through *channels*. Here they are! the two "big" words have been shouted out:
+Technically-speaking, the system we are going to build consists in two *threads* that exchange and print Ping-Pong messages through *channels*. Here they are! the "big" words have been shouted out.
 
-> a **system** is composed of **threads** that exchange messages through **channels**.
+A> A **system** is composed of **threads** that exchange messages through **channels**.
 
 That's pretty much summarize what (an major part of) *core.async* is all about !
 
@@ -37,28 +37,45 @@ The first two parameters are intended to be the two communication channels on wh
 
 The parameter `kind` indicates the message that the thread will emit: either `"Ping ! "` or `"Pong ! "`. The `thread` primitive of *core.async* is used to spawn a new ... guess what ? ... *thread* of course ! In *clojure* this means a JVM thread hence what we shall call a *heavy thread* in this book. The body of `thread` will thus be executer in parallel with the caller thread, *parallelism* you go! We next enter a loop consisting in indefinitely repeating the following sequence.
 
-First, in the expression:
+1. First, in the expression:
 
-{lang="clojure"}
-    (let [msg (<!! in)]
-      ;; do something with msg
-      ...)
+  {lang="clojure"}
+      (let [msg (<!! in)]
+        ;; do something with msg
+        ...)
 
-we wait on channel `in` for a message `msg`.
+  the current thread listens on channel `in` and *blocks*  until a message `msg` can be received.
 
-Then, with:
+2. Then, with:
 
-{lang="clojure"}
-    (print msg) (flush)
+  {lang="clojure"}
+      (print msg) (flush)
 
-we print the message upon reception (note the `flush` for safer -- but not completely safe -- outputs).
+  the thread print the message upon reception (note the `flush` for safer -- but not completely safe -- outputs).
 
-Finally, with:
+3. Finally, with:
 
-{lang="clojure"}
-    (>!! out kind)
+  {lang="clojure"}
+      (>!! out kind)
 
-The thread sends on channel `out` its own `kind` of message: `"Ping ! "` if we're the *pinger*, `"Pong ! "` if we're the *ponger*.
+  the thread *blocks* until it can send on channel `out` its own `kind` of message: `"Ping ! "` if we're the *pinger*, `"Pong ! "` if we're the *ponger*.
 
-And finally we `recur` for good.
+4.  And finally we `recur` for good.
+
+I> ## Blocking send and receive actions on **synchronous channels**
+I> The fundamental characteristic of the send and receive operations is that they are potentially *blocking*. Using the default *synchronous channels* the blocking semantics is as follows:
+I>  - a thread performing a receive action  `(<!! ch)`  (receiving on channel `ch`)  is blocking until another thread performs a corresponding send action `(>!! ch value)`, i.e. sending some `value` on the *same* channel `ch`,
+I>  - and `vice-versa`.
+
+The creation of a synchronous channel is the responsability of the `chan` primitive of *core.async*.  A typical expression involving `chan` is of the form:
+
+{land="clojure"}
+    (let [ch (chan)]
+      ;; ... let's use the channel ch
+	
+We have now everything we need to create our first complete, although overally useless, *core.async* program.
+
+{crop-start-line=19,crop-end-line=26}
+<<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
+
 
