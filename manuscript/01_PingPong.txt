@@ -202,9 +202,9 @@ Q> difficult issue with no [silver bullet](https://en.wikipedia.org/wiki/No_Silv
 
 So, how do we solve this issue ? One way that preserves *non-determinism* (in many situations this is what we want!) is to give an extra gallon of fuel for the *ponger*. If the *pinger* terminates first it will be blocked before exhaustion anyway, and the extra fuel will allow the *pinger* to terminate properly.
 
-E> ## The deterministic Ping-Pong
-E> Another, more robust solution would be to modify the program so that the initialisation becomes deterministic.
-E> An idea is to split the `pingpong-fuel` definition in two, and only allows e.g. the *pinger* to start first.
+X> ## The deterministic Ping-Pong
+X> Another, more robust solution would be to modify the program so that the initialisation becomes deterministic.
+X> An idea is to split the `pingpong-fuel` definition in two, and only allows e.g. the *pinger* to start first.
 
 
 
