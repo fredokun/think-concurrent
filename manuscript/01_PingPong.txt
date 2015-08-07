@@ -92,14 +92,14 @@ Q>  for example based on *dataflow* architectures.
 
 We notice that the *ping-pong* function return values are exploited in the example.
 
-A> ## The `thread` primitive and joining
-A> An expression of the form:
-A>
-A> `(thread` *<body>*`)`
-A>
-A> creates as a side-effect a system-level thread running the *<body>* expression, and
-A> returns immediately with a *read-only* synchronous channel that can be used
-A> to *join* the thread, i.e. wait for its *termination*.
+I> ## The `thread` primitive and joining
+I> An expression of the form:
+I>
+I> `(thread` *<body>*`)`
+I>
+I> creates as a side-effect a system-level thread running the *<body>* expression, and
+I> returns immediately with a *read-only* synchronous channel that can be used
+I> to *join* the thread, i.e. wait for its *termination*.
 
 The system is started by sending a first message `"Start!"` to channel `ping`  (we could of course use `pong` instead, can you guess the change in behavior?).  Finally, we join the *pinger* thread so that the main thread does not terminate *too early*.
 
