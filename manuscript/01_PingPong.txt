@@ -26,8 +26,8 @@ The `clojure.core.async` namespace provides is where the main API resides. Since
 
 Now, the behavior of both our threads can be specified as a single function:
 
-{title="",crop-start-line=10,crop-end-line=17}
-<<(code/think-concurrent/src/think_concurrent/pingpong.clj)
+{crop-start-line=10,crop-end-line=17}
+<<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
 The first two parameters are intended to be the two communication channels on which the thread interact:
 
@@ -39,7 +39,7 @@ The parameter `kind` indicates the message that the thread will emit: either `"P
 
 First, in the expression:
 
-{title=""}
+{lang="clojure"}
     (let [msg (<!! in)]
       ;; do something with msg
       ...)
@@ -48,14 +48,14 @@ we wait on channel `in` for a message `msg`.
 
 Then, with:
 
-[]
+{lang="clojure"}
     (print msg) (flush)
 
 we print the message upon reception (note the `flush` for safer -- but not completely safe -- outputs).
 
 Finally, with:
 
-[]
+{lang="clojure"}
     (>!! out kind)
 
 The thread sends on channel `out` its own `kind` of message: `"Ping ! "` if we're the *pinger*, `"Pong ! "` if we're the *ponger*.
