@@ -233,7 +233,7 @@ I> appears to me as in fact closer to the *core.async*
 I> semantics (as long as we restrict to synchronous channels). There is also a long tradition
 I> of channel-based programming language originally from the Bell labs:  beginning with *Newsqueak*
 I> , continuing with *Alef* in Plan 9 and then *Limbo* in Inferno. This [list](https://swtch.com/~rsc/thread)
-I> ends with the langage (go)[http://golang.org] that is now quite popular.
+I> ends with the langage [Go](http://golang.org) that is now quite popular.
 I> However, *core.async* is *way* cooler! (there's a Lisp below).
 
 
