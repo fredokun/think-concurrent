@@ -8,22 +8,20 @@
              :refer [>!! <!! chan thread]]))
 
 (defn ping-pong
-  [in out kind]
-  (thread
-    (loop []
-      (let [msg (<!! in)]
-        (print msg) (flush)
-        (>!! out kind)
-        (recur)))))
+  [ch kind]
+  (thread (loop []
+            (let [msg (<!! ch)]
+              (print msg) (flush)
+              (>!! ch kind)
+              (recur)))))
 
 (defn run-ping-pong
   []
-  (let [ping (chan)
-        pong (chan)]
-    (let [j (ping-pong ping pong "Ping! ")
-          _ (ping-pong pong ping "Pong! ")]
-      (>!! ping "Start! ") 
-      )));;(<!! j))))
+  (let [ch (chan)]
+    (let [j (ping-pong ch "Ping! ")
+          _ (ping-pong ch "Pong! ")]
+      (>!! ch "Start! ") 
+      (<!! j))))
 
 
 

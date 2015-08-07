@@ -3,9 +3,11 @@
 
 The classical "Ping-Pong" example is somehow to concurrency what the infamous "Hello World!" is to sequential programming. It is a minimal system that still exposes some key features of (here concurrent) programs:
 
-  - there's **concurrency**: there is a Ping *and* a there is a Pong,
+  - there's **parallelism**: there is a Ping *and* a there is a Pong,
 
   - there's **interaction**: the Ping talks to the Pong and *vice-versa*,
+
+  - there's **non-determinism**: this will sprinkle with *pain* over the *joy*,
 
   - there's **no termination**: use your `Ctrl-C` to stop the program.
 
@@ -26,25 +28,22 @@ The `clojure.core.async` namespace provides is where the main API resides. Since
 
 Now, the behavior of both our threads can be specified as a single function:
 
-{crop-start-line=10,crop-end-line=17}
+{crop-start-line=10,crop-end-line=16}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
-The first two parameters are intended to be the two communication channels on which the thread interact:
+The first parameter is intended to be a communication channel on which the thread interact.
+The parameter `kind` indicates the message that the thread will emit: either `"Ping ! "` or `"Pong ! "`.
 
-  - the channel `in`  for receiving messages
-
-  - the channel `out` for sending messages
-
-The parameter `kind` indicates the message that the thread will emit: either `"Ping ! "` or `"Pong ! "`. The `thread` primitive of *core.async* is used to spawn a new ... guess what ? ... *thread* of course ! In *clojure* this means a JVM thread hence what we shall call a *heavy thread* in this book. The body of `thread` will thus be executer in parallel with the caller thread, *parallelism* you go! We next enter a loop consisting in indefinitely repeating the following sequence.
+The `thread` primitive of *core.async* is used to spawn a new ... guess what ? ... *thread* of course ! In *clojure* this means a JVM thread hence what we shall call a *heavy thread* in this book. The body of `thread` will thus be executed in parallel with the caller thread, *parallelism* you go! We next enter a loop consisting in indefinitely repeating the following sequence.
 
 1. First, in the expression:
 
     {lang="clojure"}
-        (let [msg (<!! in)]
+        (let [msg (<!! ch)]
           ;; do something with msg
           ...)
 
-    the current thread listens on channel `in` and *blocks*  until a message `msg` can be received.
+    the current thread listens on channel `ch` and *blocks*  until a message `msg` can be received.
 
 2. Then, with:
 
@@ -56,9 +55,9 @@ The parameter `kind` indicates the message that the thread will emit: either `"P
 3. Finally, with:
 
     {lang="clojure"}
-        (>!! out kind)
+        (>!! ch kind)
 
-    the thread *blocks* until it can send on channel `out` its own `kind` of message: `"Ping ! "` if we're the *pinger*, `"Pong ! "` if we're the *ponger*.
+    the thread *blocks* until it can send on channel `ch` its own `kind` of message: `"Ping ! "` if we're the *pinger*, `"Pong ! "` if we're the *ponger*.
 
 4.  And finally we `recur` for good.
 
@@ -76,10 +75,10 @@ The creation of a synchronous channel is the responsability of the `chan` primit
 	
 We have now everything we need to create our first complete, although overally useless, *core.async* program.
 
-{crop-start-line=19,crop-end-line=26}
+{crop-start-line=18,crop-end-line=24}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
-The `run-ping-pong` function first creates two synchronous channels: `ping` and `pong` and also calls the `ping-pong` thread-creating function twice. The first call is to spawn the *pinger* which waits on channel `ping` and sends `"Ping! "` messages on channel `pong`  (hence towards the *ponger*). The second call for the *ponger* uses the same channel `pong` as input, and sends on `ping` thus closing the cycle.
+The `run-ping-pong` function first creates the synchronous channel `ch` used for the interactions. It then calls the `ping-pong` thread-creating function twice to spawn the *pinger* and *ponger* threads.
 
 Q> ## What? Side-effects?
 Q> Clojurians promote side-effect-free code using higher-order functions,
@@ -101,7 +100,7 @@ I> creates as a side-effect a system-level thread running the *<body>* expressio
 I> returns immediately with a *read-only* synchronous channel that can be used
 I> to *join* the thread, i.e. wait for its *termination*.
 
-The system is started by sending a first message `"Start!"` to channel `ping`  (we could of course use `pong` instead, can you guess the change in behavior?).  Finally, we join the *pinger* thread so that the main thread does not terminate *too early*.
+The system is started by sending a first message `"Start!"` to channel `ch`.  Finally, we join the *pinger* thread so that the main thread does not terminate *too early*.
 
 To actually run the example, we can either:
 
@@ -111,11 +110,11 @@ To actually run the example, we can either:
 
     at the prompt[^run], or
 
-    [^run] : the `think-concurrent.core` namespace require all the main functions of the examples.
+    [^run]: the `think-concurrent.core` namespace require all the main functions of the examples.
 
 - directly launch the example with `lein run pingpong` [^ex]
 
-  [^ex] : all the examples can be tried using `lein run` $<example>$  with $<example>$ probably as you could guess.
+  [^ex]: all the examples can be tried using `lein run` $<example>$  with $<example>$ probably as you could guess.
 
 Let's try the second solution:
 
