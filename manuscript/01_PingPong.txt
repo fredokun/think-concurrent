@@ -128,3 +128,15 @@ Start! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! P
 ~~~~~~~~
 
 ... at some point I suggest that you hit the `Ctrl-C` key (or reboot on windows ?).
+
+In the spirit of many multi-threaded programs (e.g. web servers, database engines, etc.) our PingPong example does not terminate!  We might wonder why, then, we join the threads since they do not terminate themselves.  This is of course to ensure that the main thread, the one spawning the two PingPong threads, does *also* not terminate.  If we remove the join operation (by commenting out the last line, without forgetting to close the parentheses), the trace becomes as follows:
+
+~~~~~~~~
+--------------------------------------------
+Example: pingpong
+--------------------------------------------
+Start! Ping! 
+~~~~~~~~
+
+Oops, that's it the main thread already terminated !
+

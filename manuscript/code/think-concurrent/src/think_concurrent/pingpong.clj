@@ -22,8 +22,9 @@
         pong (chan)]
     (let [j (ping-pong ping pong "Ping! ")
           _ (ping-pong pong ping "Pong! ")]
-      (>!! ping "Start! ")
-      (<!! j))))
+      (>!! ping "Start! ") 
+      )));;(<!! j))))
+
 
 
 
