@@ -79,4 +79,52 @@ We have now everything we need to create our first complete, although overally u
 {crop-start-line=19,crop-end-line=26}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
+The `run-ping-pong` function first creates two synchronous channels: `ping` and `pong` and also calls the `ping-pong` thread-creating function twice. The first call is to spawn the *pinger* which waits on channel `ping` and sends `"Ping! "` messages on channel `pong`  (hence towards the *ponger*). The second call for the *ponger* uses the same channel `pong` as input, and sends on `ping` thus closing the cycle.
 
+Q> ## What? Side-effects?
+Q> Clojurians promote side-effect-free code using higher-order functions,
+Q> immutable (GC'ed) datastructures and so on (think *transducers* ...) *as long as this makes sense* !
+Q> Concurrency is (unlike parallel computing) pretty much about side-effects: creating processes/threads,
+Q> sending messages, waiting/blocking, etc. Hence, *core.async* is no silver-bullet and most of its
+Q> primitive involve one form or another of side effects. We will see, though, that higher-level
+Q> and apparently side-effect-free constructions can be build *atop* the *core.async* primitives,
+Q>  for example based on *dataflow* architectures.
+
+We notice that the *ping-pong* function return values are exploited in the example.
+
+A> ## The `thread` primitive and joining
+A> An expression of the form:
+A>
+A> `(thread` *<body>*`)`
+A>
+A> creates as a side-effect a system-level thread running the *<body>* expression, and
+A> returns immediately with a *read-only* synchronous channel that can be used
+A> to *join* the thread, i.e. wait for its *termination*.
+
+The system is started by sending a first message `"Start!"` to channel `ping`  (we could of course use `pong` instead, can you guess the change in behavior?).  Finally, we join the *pinger* thread so that the main thread does not terminate *too early*.
+
+To actually run the example, we can either:
+
+  - start a `repl`  (using `lein repl`) and type
+
+        => (run-ping-pong)
+
+    at the prompt[^run], or
+
+    [^run] : the `think-concurrent.core` namespace require all the main functions of the examples.
+
+- directly launch the example with `lein run pingpong` [^ex]
+
+  [^ex] : all the examples can be tried using `lein run` $<example>$  with $<example>$ probably as you could guess.
+
+Let's try the second solution:
+
+~~~~~~~~
+$ lein run pingpong
+--------------------------------------------
+Example: pingpong
+--------------------------------------------
+Start! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! ... and this can continue for some time ...
+~~~~~~~~
+
+... at some point I suggest that you hit the `Ctrl-C` key (or reboot on windows ?).
