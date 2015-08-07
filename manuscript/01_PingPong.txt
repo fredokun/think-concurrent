@@ -206,5 +206,35 @@ X> ## Exercise: the deterministic Ping-Pong
 X> Another, more robust solution would be to modify the program so that the initialisation becomes deterministic.
 X> An idea is to split the `pingpong-fuel` definition in two, and only allows e.g. the *pinger* to start first.
 
+## Interlude: concurrent programming metaphors
+
+There exist many ways to design and write concurrent and parallel programs. There are two main metaphors:
+
+  1. the **shared memory metaphor** is based on concurrent reads/writes on shared variables, most of the time using locking mechanisms to prevent issues. This is clearly the most common approach to concurrent programming, but it is low-level and error-prone. Note that this is really a metaphor in that modern processors have multiple cores with non-shared caches that involves queuing, hence the full sharing metaphor is just a view of the mind.
+
+  2. the **message-passing** metaphor is a higher-level view inspired by the physical world. In this metaphor messages are exchanged among entities by means of communication mediums.
+
+The *clojure* case is interesting. At the basis you find the JVM and its very advanced support for shared memory interactions. But it is (I think) an accepted knowledge that programming even at the level of java threads using object monitors, synchronized blocks and methods, volatile variables and compare-and-swap operations on atomic objects is at the very best *error-prone*. The language *clojure*, beyond being *the* lisp of the JVM[^jlisps], provides many (perhaps too many ?) abstractions for concurrency. First, it promotes (and provides) immutability datastructures and pure functions, which are parallelism-friendly (as long as your GC is parallel and efficient).  But in order to cope with the (unavoidable) hardness of concurrent programming, it also provides many abstraction: software transactional memory (STM), transients, ..., and of course and before all *core.async* which is, in my opinion, the better tool in this rich toolset.
+
+[^jlisps]: While I *do* enjoy programming in Clojure, and greatly appreciate the fact that it is perhaps the most popular Lisp ever, there are other interesting Lisps for the JVM, especially (Kaffe)[] for the Schemers and (ABCL)[] for the Common Lispers.
+
+To speak about *core.async*, it is clearly a member of the *message-passing* family. I think *core.async* could be called a **Channel Oriented Programming** framework (COP ? really ?).  So in clojure you get the best of both world!
+
+I> ## Channels: always and everywhere
+I> *core.async* is by no means the first language adopting a *channel-first* view of concurrency.
+I> The most famous example is the *Communicating Sequential Processes* (CSP) of *sir Tony Hoare*.
+I> In a seminal paper (197x?) the syntax and informal semantics of a programming formalism
+I> for concurrency is proposed. This will evolve to both a *theory*  (the CSP *theory*, which is
+I> related although distinct) and a real programming language, perhaps slightly ahead of its time: (OCCAM)[].
+I> Note, however, that channel references cannot be transmitted in CSP/OCCAM  (at least not in
+I> the original versions). The theory of $\pi$-calculus is in fact closer to the *core.async* 
+I> semantics (as long as we restrict to synchronous channels). There is also a long tradition
+I> of channel-based programming language originally from the Bell labs:  beginning with (Newsqueak)[]
+I> (a nice prototype), continuing with (Alef)[] in Plan 9 and then (Limbo)[] in Inferno. This list
+I> ends with the langage (go)[http://golang.org] that is now quite popular. You might ask
+I> what is the main relation between these languages, beyond the fact that they provide
+I> roughly the same concurrency model (quite close to *core.async*)? They were all designed or co-designed
+I> by *Rob Pike*... Never say die!
+
 
 
