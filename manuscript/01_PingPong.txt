@@ -114,9 +114,9 @@ To actually run the example, we can either:
 
     [^run]: the `think-concurrent.core` namespace require all the main functions of the examples.
 
-- directly launch the example with `lein run pingpong` [^ex]
+  - directly launch the example with `lein run pingpong`[^ex].
 
-  [^ex]: all the examples can be tried using `lein run` $<example>$  with $<example>$ probably as you could guess.
+    [^ex]: all the examples can be tried using `lein run` *<example>*  with *<example>* probably as you could guess.
 
 Let's try the second solution:
 
@@ -227,7 +227,7 @@ I> In a seminal paper (197x?) the syntax and informal semantics of a programming
 I> for concurrency is proposed. This will evolve to both a *theory*  (the CSP *theory*, which is
 I> related although distinct) and a real programming language, perhaps slightly ahead of its time: (OCCAM)[].
 I> Note, however, that channel references cannot be transmitted in CSP/OCCAM  (at least not in
-I> the original versions). The theory of $\pi$-calculus is in fact closer to the *core.async* 
+I> the original versions). The theory of Pi-calculus is in fact closer to the *core.async* 
 I> semantics (as long as we restrict to synchronous channels). There is also a long tradition
 I> of channel-based programming language originally from the Bell labs:  beginning with (Newsqueak)[]
 I> (a nice prototype), continuing with (Alef)[] in Plan 9 and then (Limbo)[] in Inferno. This list
