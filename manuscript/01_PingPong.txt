@@ -26,7 +26,7 @@ The `clojure.core.async` namespace provides is where the main API resides. Since
 
 Now, the behavior of both our threads can be specified as a single function:
 
-{crop-start-line=29,crop-end-line=17}
+{crop-start-line=10,crop-end-line=17}
 <<(code/think-concurrent/src/think_concurrent/pingpong.clj)
 
 
