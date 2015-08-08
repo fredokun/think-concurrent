@@ -5,15 +5,15 @@
 
 (ns think-concurrent.pingpong
   (:require [clojure.core.async
-             :refer [>!! <!! chan thread]]))
+             :refer [>!! >! <!! <! chan go]]))
 
 (defn pingpong
   [ch kind]
-  (thread (loop []
-            (let [msg (<!! ch)]
-              (print msg) (flush)
-              (>!! ch kind)
-              (recur)))))
+  (go (loop []
+        (let [msg (<! ch)]
+          (print msg) (flush)
+          (>! ch kind)
+          (recur)))))
 
 (defn run-pingpong
   []
@@ -26,12 +26,12 @@
 
 (defn pingpong-fuel
   [ch kind fuel]
-  (thread (loop [level fuel]
-            (when (> level 0)
-              (let [msg (<!! ch)]
-                (print msg) (flush)
-                (>!! ch kind)
-                (recur (- level 1)))))))
+  (go (loop [level fuel]
+        (when (> level 0)
+          (let [msg (<! ch)]
+            (print msg) (flush)
+            (>! ch kind)
+            (recur (- level 1)))))))
 
 (defn run-pingpong-fuel
   [fuel]
