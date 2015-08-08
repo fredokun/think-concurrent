@@ -16,7 +16,7 @@
 (def +cs-count+ (atom 0 :validator #(<= % 1)))
 
 (defn critsec-bad
-  [id enter csfun]
+  [id csfun]
   (go
     (swap! +cs-count+ #(+ % 1))
     ;; Critical Section start
@@ -25,6 +25,28 @@
     (log (str ">>> Critical Section #" id " left"))
     ;; Cristical Section end
     (swap! +cs-count+ #(- % 1))))
+
+(defn default-csfun
+  [id]
+  (Thread/sleep 20)) ;send +printer+ (fn [_] (println (str "   ==> in critical section #" id)))))
+
+(defn run-critsec-bad
+  [nb csfun]
+  (loop [id 1]
+    (when (<= id nb)
+      (critsec-bad id csfun)
+      (recur (+ id 1))))
+  ;; bad things happen fast !
+  (Thread/sleep 1000))
+
+(defn controller
+  [nb enter]
+  (go (loop [nb nb]
+        (when (> nb 0)
+          (let [leave (chan)]
+            (>! enter leave)
+            (<! leave)
+            (recur (- nb 1)))))))
 
 (defn critsec-good
   [id enter csfun]
@@ -39,28 +61,6 @@
       (swap! +cs-count+ #(- % 1))
       (>! leave id))))
 
-(defn controller
-  [nb enter]
-  (go (loop [nb nb]
-        (when (> nb 0)
-          (let [leave (chan)]
-            (>! enter leave)
-            (<! leave)
-            (recur (- nb 1)))))))
-
-(defn default-csfun
-  [id]
-  (Thread/sleep 20)) ;send +printer+ (fn [_] (println (str "   ==> in critical section #" id)))))
-
-(defn run-critsec-bad
-  [nb csfun]
-  (let [enter (chan)]
-    (loop [id 1]
-      (when (<= id nb)
-        (critsec-bad id enter csfun)
-        (recur (+ id 1))))
-    (let [j (controller nb enter)]
-      (<!! j))))
 
 (defn run-critsec-good
   [nb csfun]
