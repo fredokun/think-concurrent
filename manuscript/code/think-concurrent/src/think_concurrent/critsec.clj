@@ -5,30 +5,26 @@
 
 (ns think-concurrent.critsec
   (:require [clojure.core.async
-             :refer [>!! >! <!! <! alts! chan go thread timeout]]))
-
-
-(def +printer+ (agent nil))
-
-(defn- log [msg]
-  (send +printer+ (fn [_] (println msg))))
+             :refer [>!! >! <!! <! alts! chan go thread timeout]])
+  (:require [think-concurrent.utils
+             :refer [log]]))
 
 (def +cs-count+ (atom 0 :validator #(<= % 1)))
 
 (defn critsec-bad
   [id csfun]
   (go
-    (swap! +cs-count+ #(+ % 1))
+    ;;(swap! +cs-count+ #(+ % 1))
     ;; Critical Section start
     (log (str ">>> Critical Section #" id " entered"))
     (csfun id)
-    (log (str ">>> Critical Section #" id " left"))
+    (log (str ">>> Critical Section #" id " left"))))
     ;; Cristical Section end
-    (swap! +cs-count+ #(- % 1))))
+    ;;(swap! +cs-count+ #(- % 1))))
 
 (defn default-csfun
   [id]
-  (Thread/sleep 20)) ;send +printer+ (fn [_] (println (str "   ==> in critical section #" id)))))
+  (Thread/sleep 20))
 
 (defn run-critsec-bad
   [nb csfun]
@@ -36,7 +32,7 @@
     (when (<= id nb)
       (critsec-bad id csfun)
       (recur (+ id 1))))
-  ;; bad things happen fast !
+  ;; no need for a join, bad things happen fast !
   (Thread/sleep 1000))
 
 (defn controller

@@ -1,0 +1,63 @@
+
+# Critical sections
+
+In this chapter we will address the classic of classics: the **mutual
+exclusion problem**. Even if you want to do *parallelism*, go fast,
+etc. the first thing we have to learn is how to *synchronize*
+processes. Perhaps the most "brutal" way of synchronizing processes is
+to ensure that a well-identified part of their behavior -- the
+**critical sections** are running in a completely isolated way, free
+from any form of *interference*. For many scenarios, this is too much a
+ requirement but there are cases when the complete isolation offered by
+  mutual exclusion is needed  (e.g. writing some data in a file).
+  Moreover, the principles used to ensure mutual exclusion will be of course
+   useful for less "extremist" scenarios.
+
+Today's namespace specification is as follows:
+
+{crop-start-line=6,crop-end-line=10}
+<<[critsec.clj](code/think-concurrent/src/think_concurrent/critsec.clj)
+
+## Preliminary: a safe printer
+
+Before starting our critical section, we need to be able to trace the
+behavior of our processes. In the PingPong example we used basic
+`println` calls, however it's often the case that printing from different
+ threads produce mangled data on the standard output.
+
+We could overcome the problem using *core.async* but there's a quite idiomatic
+ Clojure way of doing it, in a few lines of code:
+
+{crop-start-line=2,crop-end-line=7}
+<<[utils.clj](code/think-concurrent/src/think_concurrent/utils.clj)
+
+This is a Clojure *agent* that roughly corresponds to a thread that
+ can receive messages, using the `send` primitive. The messages
+  are queued using a first-in-first-out (FIFO) strategy. This is
+   perfect for our "sequence of println's" problem, these cannot
+    intefere anymore (as long as we print everything through the
+     agent).  We will come back to this kind of example when we will
+      talk about *actors* in a later chapter. But for now, we can keep in mind that:
+
+  1.  *core.async* interoperates seemlessly with other Clojure concurrency features (although we
+will not talk much about them),
+
+  2. we can use `log(<msg>)` to print `<msg>` on the standard output in a safe way[^log]
+
+[^log]: Of course, more powerful log mechanisms should be used in production software.
+
+## The no-so critical sections
+
+Let's begin with a broken version.
+
+{crop-start-line=14,crop-end-line=23}
+<<[critsec.clj](code/think-concurrent/src/think_concurrent/critsec.clj)
+
+A `critsec-bad` go-process is parameterized by an `id` (to understand where we are in the traces) and
+a chunk of code (the `csfun` argument, assumed to be a single argument function) that we intend to
+run in mutual exclusion.  For now, suppose we comment out the `swap!` things and let's try to spawn a certain number of these.
+
+{crop-start-line=29,crop-end-line=36}
+<<[critsec.clj](code/think-concurrent/src/think_concurrent/critsec.clj)
+
+Let's try
