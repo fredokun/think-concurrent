@@ -12,8 +12,8 @@
 (defn run-pingpong []
   (let [ch (chan)]
     (thread (pingpong ch "Ping! "))
-    (thread (pingpong ch "Pong! "))
-    (>!! ch "Start! ")))
+    (>!! ch "Start! ")
+    (pingpong ch "Pong! ")))
 
 (defn pingpong-fuel
   [ch kind fuel]

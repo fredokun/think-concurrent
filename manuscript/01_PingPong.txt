@@ -85,37 +85,28 @@ The following sequence is repeated infinitely:
 
 The channel `ch` can then be used in the body of the `let` for sending (with `>!!`) and receiving (with `>!!`), among other possibilities.
 
-2. Two `ping` and `pong` threads are created using the `thread` primitive of *core.async*:
+2. We create a *ping* thread to run in parallel with the current thread:
 
 {lang="clojure"}
     (thread (pingpong ch "Ping! "))
-    (thread (pingpong ch "Pong! "))]
-    ;; ... the threads are now running
+    ;; ... two threads are now running
     ...
 
 The `thread` primitive is used to spawn a new ... guess what ? ... *thread* of course ! The body of the `thread` primitive is executed in a newly spawned JVM thread, a.k.a. an *heavyweight* thread, and thus runs in parallel with the thread calling the primitive. This also means that the call to `thread` is non-blocking. The library *core.async* can also handle much more *lightweight* threads, which we will discuss at lenght, at large and in depth.. but for now we will contend with the heavy ones.
 
-Q> ## What? Side-effects?
-Q> Clojurians promote side-effect-free code using higher-order functions,
-Q> immutable (GC'ed) datastructures and so on (think *transducers* ...) *as long as this makes sense* !
-Q> Concurrency is (unlike parallel computing) pretty much about side-effects: creating processes/threads,
-Q> sending messages, waiting/blocking, etc. Hence, *core.async* is no silver-bullet and most of its
-Q> primitive involve one form or another of side effects. We will see, though, that higher-level
-Q> and apparently side-effect-free constructions can be build *atop* the *core.async* primitives,
-Q>  for example based on *dataflow* architectures.
+3. The system is started by sending a first message `"Start!"` to channel `ch`.
 
-We notice that the *ping-pong* function return values are exploited in the example.
+{lang="clojure"}
+    (>!! ch "Start! ")
 
-I> ## The `thread` primitive and joining
-I> An expression of the form:
-I>
-I> `(thread` *<body>*`)`
-I>
-I> creates as a side-effect a system-level thread running the *<body>* expression, and
-I> returns immediately with a *read-only* synchronous channel that can be used
-I> to *join* the thread, i.e. wait for its *termination*.
+4. The main thread becomes the *pong* part:
 
-The system is started by sending a first message `"Start!"` to channel `ch`.  Finally, we join the *pinger* thread so that the main thread does not terminate *too early*.
+{lang="clojure"}
+    (pingpong ch "Pong ! ")
+
+Since the `pingpong` function involves an infinite loop, our main threads never
+returns.
+
 
 To actually run the example, we can either:
 
@@ -141,7 +132,9 @@ Example: pingpong
 Start! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! ... and this can continue for some time ...
 ~~~~~~~~
 
-... at some point I suggest that you hit the `Ctrl-C` key (or reboot on windows ?).
+... at some point I suggest that you hit the `Ctrl-C` key (or reboot on windows[^joke] ?).
+
+[^joke]: people working with computed in the mid-90's may remember such w-bashing jokes with nostalgia.
 
 In the spirit of many multi-threaded programs (e.g. web servers, database engines, etc.) our PingPong example does not terminate!  We might wonder why, then, we join the threads since they do not terminate themselves.  This is of course to ensure that the main thread, the one spawning the two PingPong threads, does *also* not terminate.  If we remove the join operation (by commenting out the last line, without forgetting to close the parentheses), the trace becomes as follows:
 
@@ -250,3 +243,25 @@ I> ends with the langage [Go](http://golang.org) that is now quite popular.
 I> However, *core.async* is *way* cooler! (there's a Lisp below).
 
 
+## Misc... (put these somewhere ?)
+
+Q> ## What? Side-effects?
+Q> Clojurians promote side-effect-free code using higher-order functions,
+Q> immutable (GC'ed) datastructures and so on (think *transducers* ...) *as long as this makes sense* !
+Q> Concurrency is (unlike parallel computing) pretty much about side-effects: creating processes/threads,
+Q> sending messages, waiting/blocking, etc. Hence, *core.async* is no silver-bullet and most of its
+Q> primitive involve one form or another of side effects. We will see, though, that higher-level
+Q> and apparently side-effect-free constructions can be build *atop* the *core.async* primitives,
+Q>  for example based on *dataflow* architectures.
+
+
+We notice that the *ping-pong* function return values are exploited in the example.
+
+I> ## The `thread` primitive and joining
+I> An expression of the form:
+I>
+I> `(thread` *<body>*`)`
+I>
+I> creates as a side-effect a system-level thread running the *<body>* expression, and
+I> returns immediately with a *read-only* synchronous channel that can be used
+I> to *join* the thread, i.e. wait for its *termination*.
