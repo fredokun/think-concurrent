@@ -1,4 +1,3 @@
-
 (ns think-concurrent.pingpong
   (:require [clojure.core.async
              :refer [>!! >! <!! <! chan go]]))
