@@ -156,6 +156,8 @@ I>
 I> {lang="clojure"}
 I>     (let [join (thread ...body...)]
 I>        ;; ... the thread is joinable on channel join
+I>        ...
+I>        (<!! join)  ;; this will block until the thread terminates
 I>        ...)
 I>
 I> creates as a side-effect a system-level thread running the *body* expression, and
@@ -166,10 +168,10 @@ Let's start the system at the repl this time:
 
 ~~~~~~~~
 $ lein repl
-nREPL server started on port 53047 on host 127.0.0.1 - nrepl://127.0.0.1:53047
-REPL-y 0.3.5, nREPL 0.2.10
-Clojure 1.7.0
-Java HotSpot(TM) 64-Bit Server VM 1.8.0-b132
+nREPL server started on port 46154 on host 127.0.0.1 - nrepl://127.0.0.1:46154
+REPL-y 0.3.7, nREPL 0.2.12
+Clojure 1.8.0
+OpenJDK 64-Bit Server VM 1.8.0_121-8u121-b13-3-b13
 
    ... etc ...
 
@@ -205,7 +207,7 @@ Q> concurrent programs on parallel hardware. On the other hand, this is a major 
 Q> of bugs that are extremely difficult to track-down, and whose effects can be
 Q> disastrous. Frameworks such as `core.async` offer ways to control *non-determinism*
 Q> thanks to powerfull abstractions. But we shouldn't be too naive, this is a
-Q> difficult issue with no [silver bullet](https://en.wikipedia.org/wiki/No_Silver_Bullet).
+Q> difficult issue and there's no [silver bullet](https://en.wikipedia.org/wiki/No_Silver_Bullet).
 
 So, how do we solve this issue ? One way that preserves *non-determinism* (in many situations this is what we want!) is to give an extra gallon of fuel for the *ponger*. If the *pinger* terminates first it will be blocked before exhaustion anyway, and the extra fuel will allow the *pinger* to terminate properly.
 
@@ -221,11 +223,11 @@ There exist many ways to design and write concurrent and parallel programs. Ther
 
   2. the **message-passing** metaphor is a higher-level view inspired by the physical world. In this metaphor messages are exchanged among entities by means of communication mediums.
 
-The *clojure* case is interesting. At the basis you find the JVM and its very advanced support for shared memory interactions. But it is (I think) an accepted knowledge that programming even at the level of java threads using object monitors, synchronized blocks and methods, volatile variables and compare-and-swap operations on atomic objects is at the very best *error-prone*. The language *clojure*, beyond being *the* lisp of the JVM[^jlisps], provides many (perhaps too many ?) abstractions for concurrency. First, it promotes (and provides) immutability datastructures and pure functions, which are parallelism-friendly (as long as your GC is parallel and efficient).  But in order to cope with the (unavoidable) hardness of concurrent programming, it also provides many abstraction: software transactional memory (STM), transients, ..., and of course and before all *core.async* which is, in my opinion, the better tool in this rich toolset.
+The *clojure* case is interesting. At the basis you find the JVM and its very advanced support for shared memory interactions. But it is (I think) an accepted knowledge that programming even at the level of java threads using object monitors, synchronized blocks and methods, volatile variables and compare-and-swap operations on atomic objects is at the very best *error-prone*. The language *clojure*, beyond being a lisp of the JVM[^jlisps], provides many (perhaps too many ?) abstractions for concurrency. First, it promotes (and provides) immutable datastructures and pure functions, which are parallelism-friendly (as long as your GC is parallel and efficient).  But in order to cope with the (unavoidable) hardness of concurrent programming, it also provides many abstraction: software transactional memory (STM), transients, ..., and of course and before all *core.async* which is, in my opinion, the better tool in this rich toolset.
 
 [^jlisps]: While I *do* enjoy programming in Clojure, and greatly appreciate the fact that it is perhaps the most popular Lisp ever, there are other interesting Lisps for the JVM, especially (Kaffe)[] for the Schemers and (ABCL)[] for the Common Lispers.
 
-To speak about *core.async*, it is clearly a member of the *message-passing* family. I think *core.async* could be called a **Channel Oriented Programming** framework (COP ? really ?).  So in clojure you get the best of both world!
+To speak about *core.async*, it is clearly a member of the *message-passing* family. In this family you will mainly find the actor-based languages and the channel-oriented languages based on Tony Hoare's *communicating sequential processes* (CSP). I think *core.async* could be called a **Channel Oriented Programming** framework (COP ? really ?).  So in clojure you get the best of both world!
 
 I> ## Channels: what else ?
 I> *core.async* is by no means the first language adopting a *channel-first* view of concurrency.
