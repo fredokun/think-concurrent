@@ -134,29 +134,29 @@ Start! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! P
 
 [^joke]: people working with computed in the mid-90's may remember such w-bashing jokes with nostalgia.
 
-In the spirit of many multi-threaded programs (e.g. web servers, database engines, etc.) our PingPong example does not terminate!  We might wonder why, then, we join the threads since they do not terminate themselves.  This is of course to ensure that the main thread, the one spawning the two PingPong threads, does *also* not terminate.  If we remove the join operation (by commenting out the last line, without forgetting to close the parentheses), the trace becomes as follows:
-
-~~~~~~~~
---------------------------------------------
-Example: pingpong
---------------------------------------------
-Start! Ping! 
-~~~~~~~~
-
-Oops, that's it the main thread already terminated !
-
 ## Version 2: the gas-guzzlers with a paddle
 
-Of course, not *all* concurrent programs are non-terminating, but let's say that if non-termination is a show-stopper for sequential programs, it is a *feature* of many concurrent programs.
+Not *all* concurrent programs are non-terminating, but let's say that if non-termination is a show-stopper for sequential programs, it is a *feature* of many concurrent programs. In fact, ensuring the termination of a concurrent program can easily become non-trivial. As an illustration, we
+will modify the Ping-Pong example so that it predictibly terminates. One simple way would be to let the program run for a given amount of "real" time, e.g. 2 seconds. We could spawn two parallel threads and then call `(Thread/sleep 2000)` in the main thread. But the termination is here quite impredictable (it runs for *about* 2 seconds) and abrupt: the terminating thread will kill all the threads it's spawned (think `kill -9` !).  One idea to make a thread self-terminating predictably is to provide it with some fuel, and force the thread termination when it's exhausted (I hope you're not!).
 
-So let's modify slightly the Ping-Pong example so that it predictibly terminates. One idea to make thread self-terminating is to provide them with some fuel, and force the thread termination when it's exhausted (I hope you're not!).
-
-{crop-start-line=27,crop-end-line=34}
+{crop-start-line=18,crop-end-line=24}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
+
+We notice that the value returned by the `thread` primitive is exploited in the example,
+ so that the thread can be *joined* upon termination.
+
+I> ## The `thread` primitive and joining
+I> An expression of the form:
+I>
+I> `(thread` *<body>*`)`
+I>
+I> creates as a side-effect a system-level thread running the *<body>* expression, and
+I> returns immediately with a *read-only* synchronous channel that can be used
+I> to *join* the thread, i.e. wait for its *termination*.
 
 The *runner* is modified accordingly.
 
-{crop-start-line=36,crop-end-line=44}
+{crop-start-line=26,crop-end-line=33}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
 Let's start the system at the repl this time:
@@ -253,13 +253,3 @@ Q> and apparently side-effect-free constructions can be build *atop* the *core.a
 Q>  for example based on *dataflow* architectures.
 
 
-We notice that the *ping-pong* function return values are exploited in the example.
-
-I> ## The `thread` primitive and joining
-I> An expression of the form:
-I>
-I> `(thread` *<body>*`)`
-I>
-I> creates as a side-effect a system-level thread running the *<body>* expression, and
-I> returns immediately with a *read-only* synchronous channel that can be used
-I> to *join* the thread, i.e. wait for its *termination*.

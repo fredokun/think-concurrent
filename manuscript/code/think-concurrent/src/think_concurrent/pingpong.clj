@@ -15,8 +15,7 @@
     (>!! ch "Start! ")
     (pingpong ch "Pong! ")))
 
-(defn pingpong-fuel
-  [ch kind fuel]
+(defn pingpong-fuel [ch kind fuel]
   (loop [level fuel]
     (when (> level 0)
       (let [msg (<!! ch)]
@@ -24,11 +23,10 @@
         (>!! ch kind)
         (recur (- level 1))))))
 
-(defn run-pingpong-fuel
-  [fuel]
+(defn run-pingpong-fuel [fuel]
   (let [ch (chan)]
     (let [j (thread (pingpong-fuel ch "Ping! " fuel))
-          _ (thread (pingpong-fuel ch "Pong! " (inc fuel)))]
+          _ (thread (pingpong-fuel ch "Pong! " fuel))] ;; or it is (inc fuel) ?
       (Thread/sleep 100) ;; non-determinism please !
       (>!! ch "Start! ") 
       (<!! j)
