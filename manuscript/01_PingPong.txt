@@ -33,10 +33,10 @@ Now, the behavior of both our threads can be specified as a single function:
 {crop-start-line=5,crop-end-line=11}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
-The first parameter is intended to be a communication channel on which the thread interact.
+The first parameter `ch` is intended to be a communication channel on which the thread interact.
 The parameter `kind` indicates the message that the thread will emit: either `"Ping ! "` or `"Pong ! "`.
 
-The `thread` primitive of *core.async* is used to spawn a new ... guess what ? ... *thread* of course ! In *clojure* this means a JVM thread hence what we shall call a *heavy thread* in this book. The body of `thread` will thus be executed in parallel with the caller thread, *parallelism* you go! We next enter a loop consisting in indefinitely repeating the following sequence.
+We next enter a loop consisting in indefinitely repeating the following sequence.
 
 1. First, in the expression:
 
@@ -59,14 +59,14 @@ The `thread` primitive of *core.async* is used to spawn a new ... guess what ? .
     {lang="clojure"}
         (>!! ch kind)
 
-    the thread *blocks* until it can send on channel `ch` its own `kind` of message: `"Ping ! "` if we're the *pinger*, `"Pong ! "` if we're the *ponger*.
+    the thread *blocks* until it can send on channel `ch` its own `kind` of message: the string `"Ping ! "` if we're the *pinger*, and the string `"Pong ! "` if we're the *ponger*.
 
 4.  And finally we `recur` for good.
 
 I> ## Blocking send and receive actions on **synchronous channels**
-I> The fundamental characteristic of the send and receive operations is that they are potentially *blocking*. Using the default *synchronous channels* the blocking semantics is as follows:
+I> The fundamental characteristic of the send and receive operations of `core.async` is that they are potentially *blocking*. Using the default semantics of *synchronous channels* we have:
 I>
-I>  - a thread performing a receive action  `(<!! ch)`  (receiving on channel `ch`)  is blocking until another thread performs a corresponding send action `(>!! ch value)`, i.e. sending some `value` on the *same* channel `ch`,
+I>  - a thread performing a receive action  `(<!! ch)`  (receiving on channel `ch`)  will block until another thread performs a corresponding send action `(>!! ch value)`, i.e. sending some `value` on the *same* channel `ch`,
 I>  - and `vice-versa`.
 
 The creation of a synchronous channel is the responsability of the `chan` primitive of *core.async*.  A typical expression involving `chan` is of the form:
@@ -74,13 +74,13 @@ The creation of a synchronous channel is the responsability of the `chan` primit
 {lang="clojure"}
     (let [ch (chan)]
       ;; ... let's use the channel ch
-	
+
 We have now everything we need to create our first complete, although overally useless, *core.async* program.
 
 {crop-start-line=18,crop-end-line=24}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
-The `run-ping-pong` function first creates the synchronous channel `ch` used for the interactions. It then calls the `ping-pong` thread-creating function twice to spawn the *pinger* and *ponger* threads.
+The `run-ping-pong` function first creates the synchronous channel `ch` used for the interactions. The `thread` primitive of *core.async* is used to spawn a new ... guess what ? ... *thread* of course ! In Clojure this means a JVM thread hence what we shall call a *heavy thread* in this book. The body of `thread` will thus be executed in parallel with the caller thread, *parallelism* you go! It then calls the `ping-pong` thread-creating function twice to spawn the *pinger* and *ponger* threads.
 
 Q> ## What? Side-effects?
 Q> Clojurians promote side-effect-free code using higher-order functions,
