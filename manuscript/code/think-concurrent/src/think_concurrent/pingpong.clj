@@ -25,11 +25,11 @@
 
 (defn run-pingpong-fuel [fuel]
   (let [ch (chan)]
-    (let [j (thread (pingpong-fuel ch "Ping! " fuel))
+    (let [join (thread (pingpong-fuel ch "Ping! " fuel))
           _ (thread (pingpong-fuel ch "Pong! " fuel))] ;; or it is (inc fuel) ?
       (Thread/sleep 100) ;; non-determinism please !
       (>!! ch "Start! ") 
-      (<!! j)
+      (<!! join)
       (println "Joined!"))))
 
 
