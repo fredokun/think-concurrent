@@ -74,38 +74,36 @@ We have now everything we need to create our first complete, although overally u
 {crop-start-line=12,crop-end-line=16}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
-The following sequence is repeated infinitely:
-
 1. First we create a synchronous channel using is the `chan` primitive of *core.async*:
 
-{lang="clojure"}
-    (let [ch (chan)]
-      ;; ... let's use the channel ch
-      ...)
+    {lang="clojure"}
+        (let [ch (chan)]
+          ;; ... let's use the channel ch
+          ...)
 
-The channel `ch` can then be used in the body of the `let` for sending (with `>!!`) and receiving (with `>!!`), among other possibilities.
+    The channel `ch` can then be used in the body of the `let` for sending (with `>!!`) and receiving (with `<!!`), among other possibilities.
 
 2. We create a *ping* thread to run in parallel with the current thread:
 
-{lang="clojure"}
-    (thread (pingpong ch "Ping! "))
-    ;; ... two threads are now running
-    ...
+    {lang="clojure"}
+        (thread (pingpong ch "Ping! "))
+        ;; ... two threads are now running
+        ...
 
-The `thread` primitive is used to spawn a new ... guess what ? ... *thread* of course ! The body of the `thread` primitive is executed in a newly spawned JVM thread, a.k.a. an *heavyweight* thread, and thus runs in parallel with the thread calling the primitive. This also means that the call to `thread` is non-blocking. The library *core.async* can also handle much more *lightweight* threads, which we will discuss at lenght, at large and in depth.. but for now we will contend with the heavy ones.
+    The `thread` primitive is used to spawn a new ... guess what ? ... *thread* of course ! The body of the `thread` primitive is executed in a newly spawned JVM thread, a.k.a. an *heavyweight* thread, and thus runs in parallel with the thread calling the primitive. This also means that the call to `thread` is non-blocking. The library *core.async* can also handle much more *lightweight* threads, which we will discuss at lenght, at large and in depth.. but for now we will contend with the heavy ones.
 
 3. The system is started by sending a first message `"Start!"` to channel `ch`.
 
-{lang="clojure"}
-    (>!! ch "Start! ")
+    {lang="clojure"}
+        (>!! ch "Start! ")
 
 4. The main thread becomes the *pong* part:
 
-{lang="clojure"}
-    (pingpong ch "Pong ! ")
+    {lang="clojure"}
+        (pingpong ch "Pong ! ")
 
-Since the `pingpong` function involves an infinite loop, our main threads never
-returns.
+    Since the `pingpong` function involves an infinite loop, our main threads never
+    returns.
 
 
 To actually run the example, we can either:
