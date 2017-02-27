@@ -4,11 +4,10 @@
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/core.async "0.2.374"]]
-  :plugins [[cider/cider-nrepl "0.11.0-SNAPSHOT"]]
+                 [org.clojure/core.async "0.3.441"]]
   :main ^:skip-aot think-concurrent.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
-  :repl-options { 
+  :repl-options {
                  :prompt (fn [_] "=> ")
                  :welcome (do)})

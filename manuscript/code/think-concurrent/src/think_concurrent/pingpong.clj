@@ -1,8 +1,4 @@
 
-;;; TODO: add common header
-
-;;; TODO: add specific header
-
 (ns think-concurrent.pingpong
   (:require [clojure.core.async
              :refer [>!! >! <!! <! chan go]]))
@@ -37,7 +33,7 @@
   [fuel]
   (let [ch (chan)]
     (let [j (pingpong-fuel ch "Ping! " fuel)
-          _ (pingpong-fuel ch "Pong! " fuel)] ;; or (+ fuel 1) ?
+          _ (pingpong-fuel ch "Pong! " (inc fuel))] ;; or (+ fuel 1) ?
       (Thread/sleep 100) ;; non-determinism please !
       (>!! ch "Start! ") 
       (<!! j)

@@ -71,7 +71,7 @@ I>  - and `vice-versa`.
 
 The creation of a synchronous channel is the responsability of the `chan` primitive of *core.async*.  A typical expression involving `chan` is of the form:
 
-{land="clojure"}
+{lang="clojure"}
     (let [ch (chan)]
       ;; ... let's use the channel ch
 	

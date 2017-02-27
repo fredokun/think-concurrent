@@ -1,8 +1,4 @@
 
-;;; TODO: add common header
-
-;;; TODO: add specific header
-
 (ns think-concurrent.critsec
   (:require [clojure.core.async
              :refer [>!! >! <!! <! alts! chan go thread timeout]])
@@ -14,13 +10,12 @@
 (defn critsec-bad
   [id csfun]
   (go
-    ;;(swap! +cs-count+ #(+ % 1))
-    ;; Critical Section start
+    #_(swap! +cs-count+ #(inc %))
     (log (str ">>> Critical Section #" id " entered"))
     (csfun id)
-    (log (str ">>> Critical Section #" id " left"))))
-    ;; Cristical Section end
-    ;;(swap! +cs-count+ #(- % 1))))
+    (log (str "<<< Critical Section #" id " left"))
+    #_(swap! +cs-count+ #(dec %))))
+
 
 (defn default-csfun
   [id]
@@ -48,15 +43,12 @@
   [id enter csfun]
   (go
     (let [leave (<! enter)]
-      (swap! +cs-count+ #(+ % 1))
-      ;; Critical Section start
+      (swap! +cs-count+ #(inc %))
       (log (str ">>> Critical Section #" id " entered"))
       (csfun id)
-      (log (str ">>> Critical Section #" id " left"))
-      ;; Cristical Section end
-      (swap! +cs-count+ #(- % 1))
+      (log (str "<<< Critical Section #" id " left"))
+      (swap! +cs-count+ #(dec %))
       (>! leave id))))
-
 
 (defn run-critsec-good
   [nb csfun]
@@ -67,6 +59,5 @@
         (recur (+ id 1))))
     (let [j (controller nb enter)]
       (<!! j))))
-
 
 
