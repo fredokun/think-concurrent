@@ -30,7 +30,7 @@ The `clojure.core.async` namespace provides is where the main API resides. Since
 
 Now, the behavior of both our threads can be specified as a single function:
 
-{crop-start-line=5,crop-end-line=11}
+{crop-start-line=5,crop-end-line=10}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
 The first parameter `ch` is intended to be a communication channel on which the thread interact.
@@ -69,18 +69,31 @@ I>
 I>  - a thread performing a receive action  `(<!! ch)`  (receiving on channel `ch`)  will block until another thread performs a corresponding send action `(>!! ch value)`, i.e. sending some `value` on the *same* channel `ch`,
 I>  - and `vice-versa`.
 
-The creation of a synchronous channel is the responsability of the `chan` primitive of *core.async*.  A typical expression involving `chan` is of the form:
+We have now everything we need to create our first complete, although overally useless, *core.async* program.
+
+{crop-start-line=12,crop-end-line=16}
+<<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
+
+The following sequence is repeated infinitely:
+
+1. First we create a synchronous channel using is the `chan` primitive of *core.async*:
 
 {lang="clojure"}
     (let [ch (chan)]
       ;; ... let's use the channel ch
+      ...)
 
-We have now everything we need to create our first complete, although overally useless, *core.async* program.
+The channel `ch` can then be used in the body of the `let` for sending (with `>!!`) and receiving (with `>!!`), among other possibilities.
 
-{crop-start-line=18,crop-end-line=24}
-<<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
+2. Two `ping` and `pong` threads are created using the `thread` primitive of *core.async*:
 
-The `run-ping-pong` function first creates the synchronous channel `ch` used for the interactions. The `thread` primitive of *core.async* is used to spawn a new ... guess what ? ... *thread* of course ! In Clojure this means a JVM thread hence what we shall call a *heavy thread* in this book. The body of `thread` will thus be executed in parallel with the caller thread, *parallelism* you go! It then calls the `ping-pong` thread-creating function twice to spawn the *pinger* and *ponger* threads.
+{lang="clojure"}
+    (thread (pingpong ch "Ping! "))
+    (thread (pingpong ch "Pong! "))]
+    ;; ... the threads are now running
+    ...
+
+The `thread` primitive is used to spawn a new ... guess what ? ... *thread* of course ! The body of the `thread` primitive is executed in a newly spawned JVM thread, a.k.a. an *heavyweight* thread, and thus runs in parallel with the thread calling the primitive. This also means that the call to `thread` is non-blocking. The library *core.async* can also handle much more *lightweight* threads, which we will discuss at lenght, at large and in depth.. but for now we will contend with the heavy ones.
 
 Q> ## What? Side-effects?
 Q> Clojurians promote side-effect-free code using higher-order functions,

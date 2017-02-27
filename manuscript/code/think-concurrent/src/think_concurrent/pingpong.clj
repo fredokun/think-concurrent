@@ -2,21 +2,18 @@
   (:require [clojure.core.async
              :refer [>!! <!! chan thread]]))
 
-(defn pingpong
-  [ch kind]
+(defn pingpong [ch kind]
   (loop []
     (let [msg (<!! ch)]
       (print msg) (flush)
       (>!! ch kind)
       (recur))))
 
-(defn run-pingpong
-  []
+(defn run-pingpong []
   (let [ch (chan)]
-    (let [j (thread (pingpong ch "Ping! "))
-          _ (thread (pingpong ch "Pong! "))]
-      (>!! ch "Start! ") 
-      (<!! j))))
+    (thread (pingpong ch "Ping! "))
+    (thread (pingpong ch "Pong! "))
+    (>!! ch "Start! ")))
 
 (defn pingpong-fuel
   [ch kind fuel]
