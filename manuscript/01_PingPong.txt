@@ -1,9 +1,9 @@
 
 # Warming up: Ping-Pong
 
-The classical "Ping-Pong" example is somehow to concurrency what the infamous "Hello World!" is to sequential programming. It is a minimal system that still exposes some key features of (here concurrent) programs:
+The classical "Ping-Pong" example is to concurrency what the infamous "Hello World!" is to sequential programming. It is a minimal system that still exposes some key features of (here concurrent) programs:
 
-  - there's **parallelism**: there is a Ping *and* a there is a Pong,
+  - there's **parallelism**: there is a Ping *and* there is a Pong,
 
   - there's **interaction**: the Ping talks to the Pong and *vice-versa*,
 
@@ -13,11 +13,11 @@ The classical "Ping-Pong" example is somehow to concurrency what the infamous "H
 
 But still similarly to its sequential welcoming cousin: this is *not* a deeply interesting example, so it's perfect to focus on the *compile-and-run* issues.
 
-Technically-speaking, the system we are going to build consists in two *threads* that exchange and print Ping-Pong messages through *channels*. Here they are! the "big" words have been shouted out.
+Technically-speaking, the system we are going to build consists of two *threads* that exchange and print Ping-Pong messages through *channels*. Here they are! the "big" words have been shouted out.
 
 A> A **system** is composed of **threads** that exchange messages through **channels**.
 
-That's pretty much summarize what (an major part of) *core.async* is all about !
+That pretty much summarizes what *core.async* is all about !
 
 ## Version 1: the tireless ping-pong players
 
