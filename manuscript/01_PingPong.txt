@@ -261,12 +261,12 @@ The two main abstractions provided by *core.async* are the *processes* (either J
 The fact that for example the pinger process is blocking while sending its message can be
 depicted as follows:
 
-![Blocking send](images/pinger-sender.svg)
+![Blocking send](images/pinger-sender.png)
 
 When the pinger is sending and the ponger receiving, then an *actual* communication channel is
 established, which we depict as follows:
 
-![Synchronization](images/pingpong.svg)
+![Synchronization](images/pingpong.png)
 
 In the diagram, the most important rule is the **synchronization rule**:
 
