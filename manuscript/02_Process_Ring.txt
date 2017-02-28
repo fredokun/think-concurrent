@@ -1,5 +1,73 @@
 
 # Process ring
 
+In this chapter, we will create a more complex process *topology*
+named a *ring network*. Each process is waiting for what is called a
+*token*. When the process has the token, then it performs its
+computation and then passes the token to the next process. To form a
+ring, the last process of the chan must be connected to the first
+one. In distributed algorithms, such topology allows to solve problems
+such as a leader election in a decentralized way.
+But it is also a simple way to ensure that at most one process of the ring performs
+its task in *mutual exclusion*.
+
+The process definition for ring processes is the following one:
+
+{crop-start-line=7,crop-end-line=16}
+<<[procring.clj](code/think-concurrent/src/think_concurrent/procring.clj)
+
+We distinguish among two kinds of processes:
+
+ - the *leader* which will handle the issue of termination
+
+ - the other *participants*.
+
+A process will work for `nb-turns` and the `turn` count starts at 1.
+Each time the token `tok` is reveived on the `in` channel, we log the reception using the identifier `id` of
+ the process. Then the token is passed to the next process using the channel `out`, and we proceed to the
+  next turn. The exception is if the process is the leader and it reached its last turn. In this case the
+  thread simply terminates.
+
+We can now build our ring topology. This is done as follows:
+
+{crop-start-line=18,crop-end-line=30}
+<<[procring.clj (cont'd)](code/think-concurrent/src/think_concurrent/procring.clj)
+
+We have to create `nb-nodes` processes with the following constraints:
+
+ - each process is connected to its predecessor using the channel `in` and to its successor using the channel `out`
+
+ - a unique leader is designated.
+
+The `init` channel is the input channel for the first participant, then in the `loop` we spawn a new thread
+such that the `out` of the previous process becomes the `in` of the current one. At the end of the loop,
+ the last output channel is returned, which we name the `exit` channel. Finally we spawn the leader that
+  receives `exit` as an input channel, and `init` as output, hence closing the ring. Finally, the system
+   is started by sending the `:token` to the leader.
+
+Here is the log of a run for 5 nodes and 3 turns:
+
+~~~~~~~~
+=> (run-ring-thread 5 3)
+[1]':token' received at turn #1
+[2]':token' received at turn #1
+[3]':token' received at turn #1
+[4]':token' received at turn #1
+[5](leader)':token' received at turn #1
+[1]':token' received at turn #2
+[2]':token' received at turn #2
+[3]':token' received at turn #2
+[4]':token' received at turn #2
+[5](leader)':token' received at turn #2
+[1]':token' received at turn #3
+[2]':token' received at turn #3
+[3]':token' received at turn #3
+[4]':token' received at turn #3
+[5](leader)':token' received at turn #3
+~~~~~~~~
+
+The topology can be visualized using the process diagrams defined in the previous chapter.
+
+![Ring topology](images/procring.png)
 
 

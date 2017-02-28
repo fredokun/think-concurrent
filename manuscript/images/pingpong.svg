@@ -34,7 +34,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="185.40558"
+     inkscape:cx="35.40558"
      inkscape:cy="520"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -52,7 +52,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -66,21 +66,27 @@
        cx="322.14285"
        cy="223.07649"
        rx="37.5"
-       ry="33.214287" />
+       ry="33.214287"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:12.5px;line-height:120.00000477%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        x="301.52518"
        y="226.52498"
        id="text3340-7"
-       sodipodi:linespacing="120%"><tspan
+       sodipodi:linespacing="120%"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
          y="226.52498"
          x="301.52518"
          id="tspan3373"
          sodipodi:role="line">ponger</tspan></text>
     <g
        id="g4215"
-       transform="matrix(-1,0,0,1,375.15706,-127.32143)">
+       transform="matrix(-1,0,0,1,375.15706,-127.32143)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <rect
          y="340.21936"
          x="85.228485"
@@ -108,7 +114,9 @@
          sodipodi:type="star" />
     </g>
     <g
-       id="g3344">
+       id="g3344"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <ellipse
          ry="33.214287"
          rx="37.5"
@@ -130,7 +138,9 @@
     </g>
     <g
        id="g4273"
-       transform="translate(-1.4285786,-137.67856)">
+       transform="translate(-1.4285786,-137.67856)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <rect
          y="349.14792"
          x="143.92857"
@@ -149,19 +159,36 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="209.42857"
-       y="215.07649"
+       x="152.28572"
+       y="206.65479"
        id="text4298"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
          id="tspan4300"
-         x="209.42857"
-         y="215.07649">ch</tspan></text>
+         x="152.28572"
+         y="206.65479">ch</tspan></text>
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 147.85714,220.21935 134.21429,1.5221"
        id="path4356"
        inkscape:connector-type="polyline"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="270.51178"
+       y="206.65479"
+       id="text4298-3"
+       sodipodi:linespacing="125%"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4300-6"
+         x="270.51178"
+         y="206.65479">ch</tspan></text>
   </g>
 </svg>
