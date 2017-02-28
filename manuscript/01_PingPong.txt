@@ -277,7 +277,7 @@ established, which we depict as follows:
 In the diagram, the most important rule is the **synchronization rule**:
 
 A> For a given channel, a directed arrow is
->> systematically drawned that connects all the sender processes to all the receiver ones.
+A> systematically drawned that connects all the sender processes to all the receiver ones.
 
 This will allow to depict *competition* between senders and receivers on the same channel, a potentially
  very concurrent situation!
