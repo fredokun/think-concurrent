@@ -283,6 +283,10 @@ This will allow to depict *competition* between senders and receivers on the sam
  very concurrent situation!
 
 
+## Resources
+
+TODO  (books, web links)...
+
 ## Misc... (put these somewhere ?)
 
 Q> ## What? Side-effects?
