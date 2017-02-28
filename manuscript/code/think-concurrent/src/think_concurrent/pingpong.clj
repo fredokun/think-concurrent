@@ -17,12 +17,10 @@
 
 (defn pingpong-fuel [ch kind fuel]
   (thread
-    (loop [level fuel]
-      (when (> level 0)
-        (let [msg (<!! ch)]
-          (print msg) (flush)
-          (>!! ch kind)
-          (recur (- level 1)))))))
+    (dotimes [level fuel]
+      (let [msg (<!! ch)]
+        (print msg) (flush)
+        (>!! ch kind)))))
 
 (defn run-pingpong-fuel [fuel]
   (let [ch (chan)]

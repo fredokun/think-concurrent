@@ -134,21 +134,27 @@ Start! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! Ping! Pong! P
 
 [^joke]: people working with computed in the mid-90's may remember such w-bashing jokes with nostalgia.
 
-## Version 2: the gas-guzzlers with a paddle
+## Version 2: the gas-guzzlers with rackets
 
 Not *all* concurrent programs are non-terminating, but let's say that if non-termination is a show-stopper for sequential programs, it is a *feature* of many concurrent programs. In fact, ensuring the termination of a concurrent program can easily become non-trivial. As an illustration, we
 will modify the Ping-Pong example so that it predictibly terminates. One simple way would be to let the program run for a given amount of "real" time, e.g. 2 seconds. We could spawn two parallel threads and then call `(Thread/sleep 2000)` in the main thread. But the termination is here quite impredictable (it runs for *about* 2 seconds) and abrupt: the terminating thread will kill all the threads it's spawned (think `kill -9` !).  One idea to make a thread self-terminating predictably is to provide it with some fuel, and force the thread termination when it's exhausted (I hope you're not!).
 
-{crop-start-line=18,crop-end-line=24}
+{crop-start-line=18,crop-end-line=23}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
+
+The first modification we can notice is that we moved the call to the `thread` primitive inside
+ the process definition. This will ease the transition to the lightweight *go processes* later on.
+ Consequently, we now interpret the `pingpong-fuel` function as a *process definition*: a new
+ process is created for each call to the function.  The second modification is to replace the
+  infinite loop by 
 
 The *runner* is modified accordingly.
 
-{crop-start-line=26,crop-end-line=33}
+{crop-start-line=25,crop-end-line=33}
 <<[pingpong.clj (cont'd)](code/think-concurrent/src/think_concurrent/pingpong.clj)
 
-We notice that the value returned by the `thread` primitive is exploited in the example,
- so that the thread can be *joined* upon termination.
+We notice that the value returned by the `pingpong-fuel` function, which is the value returned by the `thread` primitive,
+is used in the example, so that spawned thread can be *joined* upon termination.
 
 I> ## The `thread` primitive and joining
 I> An expression of the form:
@@ -270,8 +276,8 @@ established, which we depict as follows:
 
 In the diagram, the most important rule is the **synchronization rule**:
 
-> for a given channel, a directed arrow is
-> systematically drawned that connects all the sender processes to all the receiver ones.
+A> For a given channel, a directed arrow is
+>> systematically drawned that connects all the sender processes to all the receiver ones.
 
 This will allow to depict *competition* between senders and receivers on the same channel, a potentially
  very concurrent situation!
