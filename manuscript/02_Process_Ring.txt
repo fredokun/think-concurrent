@@ -13,7 +13,7 @@ its task in *mutual exclusion*.
 
 The process definition for ring processes is the following one:
 
-{crop-start-line=7,crop-end-line=16}
+{crop-start-line=7,crop-end-line=18}
 <<[procring.clj](code/think-concurrent/src/think_concurrent/procring.clj)
 
 We distinguish among two kinds of processes:
@@ -30,7 +30,7 @@ Each time the token `tok` is reveived on the `in` channel, we log the reception 
 
 We can now build our ring topology. This is done as follows:
 
-{crop-start-line=18,crop-end-line=30}
+{crop-start-line=20,crop-end-line=32}
 <<[procring.clj (cont'd)](code/think-concurrent/src/think_concurrent/procring.clj)
 
 We have to create `nb-nodes` processes with the following constraints:
