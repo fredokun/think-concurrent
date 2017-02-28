@@ -246,6 +246,37 @@ I> ends with the langage [Go](http://golang.org) that is now quite popular.
 I> However, *core.async* is *way* cooler! (there's a Lisp below).
 
 
+## Process diagrams
+
+The two main abstractions provided by *core.async* are the *processes* (either JVM threads or so-called *go processes*) and then *channels* they use to communicate with each other. At one point in time, it is possible to depict the structure of a *core.async* system as a network structure with:
+
+  - nodes representing processes
+
+  - directed arrows for established communication channels
+
+  - arrow heads for pending receive operations
+
+  - arrow tails for pending send operations.
+
+The fact that for example the pinger process is blocking while sending its message can be
+depicted as follows:
+
+![Blocking send](images/pinger-sender.svg)
+
+When the pinger is sending and the ponger receiving, then an *actual* communication channel is
+established, which we depict as follows:
+
+![Synchronization](images/pingpong.svg)
+
+In the diagram, the most important rule is the **synchronization rule**:
+
+> for a given channel, a directed arrow is
+> systematically drawned that connects all the sender processes to all the receiver ones.
+
+This will allow to depict *competition* between senders and receivers on the same channel, a potentially
+ very concurrent situation!
+
+
 ## Misc... (put these somewhere ?)
 
 Q> ## What? Side-effects?

@@ -1,2 +1,3 @@
 01_PingPong.txt
-02_Critical_Sections.txt
+02_Process_Ring.txt
+03_Critical_Sections.txt

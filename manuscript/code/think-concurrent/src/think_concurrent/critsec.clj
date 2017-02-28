@@ -7,8 +7,7 @@
 
 (def +cs-count+ (atom 0 :validator #(<= % 1)))
 
-(defn critsec-bad
-  [id csfun]
+(defn critsec-bad [id csfun]
   (go
     #_(swap! +cs-count+ #(inc %))
     (log (str ">>> Critical Section #" id " entered"))
@@ -16,13 +15,10 @@
     (log (str "<<< Critical Section #" id " left"))
     #_(swap! +cs-count+ #(dec %))))
 
-
-(defn default-csfun
-  [id]
+(defn default-csfun [id]
   (Thread/sleep 20))
 
-(defn run-critsec-bad
-  [nb csfun]
+(defn run-critsec-bad [nb csfun]
   (loop [id 1]
     (when (<= id nb)
       (critsec-bad id csfun)
@@ -30,8 +26,7 @@
   ;; no need for a join, bad things happen fast !
   (Thread/sleep 1000))
 
-(defn controller
-  [nb enter]
+(defn controller [nb enter]
   (go (loop [nb nb]
         (when (> nb 0)
           (let [leave (chan)]
@@ -39,8 +34,7 @@
             (<! leave)
             (recur (- nb 1)))))))
 
-(defn critsec-good
-  [id enter csfun]
+(defn critsec-good [id enter csfun]
   (go
     (let [leave (<! enter)]
       (swap! +cs-count+ #(inc %))
